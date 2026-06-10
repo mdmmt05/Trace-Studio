@@ -1,57 +1,184 @@
 # 🏁 Trace Studio
 
-> Analisi locale di sessioni di guida da data logger **Trace** (ESP32-S3).
+> Telemetry analysis platform for Trace vehicle logs.
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![Plotly](https://img.shields.io/badge/Plotly-5.22%2B-3F4F75?logo=plotly&logoColor=white)](https://plotly.com/)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python\&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B?logo=streamlit\&logoColor=white)](https://streamlit.io/)
+[![Plotly](https://img.shields.io/badge/Plotly-5.22%2B-3F4F75?logo=plotly\&logoColor=white)](https://plotly.com/)
 [![Folium](https://img.shields.io/badge/Folium-0.16%2B-77B829)](https://python-visualization.github.io/folium/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Trace Studio è un'applicazione **Streamlit** completamente locale per l'analisi di sessioni di guida registrate con il data logger Trace su ESP32-S3. Carica un singolo file CSV, ottieni in pochi secondi dashboard di sintesi, grafici temporali sincronizzati, mappa GNSS colorata e metriche di performance come tempi di accelerazione e friction circle.
+Trace Studio is a Python-based telemetry analysis platform designed to explore, validate, visualize, and analyze sessions recorded by the Trace embedded data logger.
+
+The application transforms raw telemetry logs into interactive dashboards, synchronized time-series visualizations, geographic views, and performance metrics, allowing users to investigate vehicle behaviour through a unified analysis workflow.
+
+Unlike traditional spreadsheet-based workflows, Trace Studio provides a structured telemetry pipeline with validation, derived metrics, quality assessment, and interactive exploration tools.
 
 ---
 
 ## Trace Ecosystem
 
-**Trace Ecosystem** è una piattaforma completa per l'acquisizione, la sincronizzazione e l'analisi di dati telemetrici automotive.
+**Trace Ecosystem** is a complete telemetry platform designed for the acquisition, synchronization, storage, and analysis of automotive data.
 
-L'ecosistema è composto da due progetti principali:
+The ecosystem consists of two complementary projects:
 
 ### Trace
 
-Data logger embedded basato su ESP32-S3 progettato per acquisire e sincronizzare dati provenienti da GNSS, IMU e rete veicolo (OBD2/CAN), con registrazione locale su microSD e configurazione tramite interfaccia web integrata.
+An ESP32-S3-based embedded data logger that acquires and synchronizes data from GNSS, IMU, and vehicle networks (OBD2/CAN), storing telemetry locally on a microSD card while providing configuration and monitoring through a built-in web interface.
 
 ### Trace Studio
 
-Piattaforma desktop sviluppata in Python per l'analisi delle sessioni registrate da Trace. Include dashboard interattive, visualizzazione geografica, analisi prestazionali, elaborazione dati e strumenti di validazione della qualità della telemetria.
+A Python-based telemetry analysis platform that processes and visualizes sessions recorded by Trace. It provides interactive dashboards, synchronized time-series plots, GNSS map visualization, performance analysis, and data-quality validation tools.
 
-### Obiettivo
+### Goal
 
-L'obiettivo del progetto è fornire una soluzione completamente autonoma per raccogliere, esplorare e analizzare dati di guida, dalla generazione del dato sul veicolo fino alla sua interpretazione attraverso strumenti software dedicati.
+The goal of the project is to provide a fully self-contained solution for collecting, exploring, and understanding vehicle telemetry, covering the entire workflow from data acquisition on the vehicle to post-session analysis and visualization.
 
 ### Repositories
 
-- **[Trace](https://github.com/mdmmt05/Trace)** — Embedded Data Logger
-- **[Trace Studio](https://github.com/mdmmt05/Trace-Studio)** — Telemetry Analysis Platform
+* **[Trace](https://github.com/mdmmt05/Trace)** — Embedded Data Logger
+* **[Trace Studio](https://github.com/mdmmt05/Trace-Studio)** — Telemetry Analysis Platform
 
 ---
 
-## Sommario
+## Project Overview
 
-- [Funzionalità](#funzionalità)
-- [Architettura del progetto](#architettura-del-progetto)
-- [Requisiti](#requisiti)
-- [Installazione](#installazione)
-- [Avvio](#avvio)
-- [Formato CSV atteso](#formato-csv-atteso)
-- [Struttura dei dati derivati](#struttura-dei-dati-derivati)
-- [Colonne derivate dalla pipeline](#colonne-derivate-dalla-pipeline)
-- [Eseguire i test](#eseguire-i-test)
-- [Limitazioni note](#limitazioni-note)
-- [Roadmap](#roadmap)
-- [Contribuire](#contribuire)
-- [Licenza](#licenza)
+Trace Studio was developed as the analysis component of the Trace Ecosystem.
+
+Its primary purpose is to transform raw telemetry collected in the vehicle into actionable information through a repeatable and transparent processing pipeline.
+
+The platform performs four main tasks:
+
+1. Validate telemetry logs and identify potential data quality issues.
+2. Normalize and enrich raw sensor data through derived metrics.
+3. Provide interactive visualization tools for exploratory analysis.
+4. Generate performance-oriented metrics from recorded sessions.
+
+The architecture emphasizes:
+
+* Reproducibility.
+* Data transparency.
+* Extensibility.
+* Offline-first operation.
+* Human-centered analysis workflows.
+
+All processing is performed locally. No cloud services, external databases, or proprietary backends are required.
+
+---
+
+## Software Architecture
+
+Trace Studio follows a pipeline-oriented architecture in which telemetry data is progressively validated, normalized, enriched, analyzed, and visualized.
+
+### Processing Pipeline
+
+```mermaid
+flowchart LR
+    CSV[Trace CSV Log]
+        --> IMPORTER[Importer]
+
+    IMPORTER
+        --> PROCESSING[Processing Pipeline]
+
+    PROCESSING
+        --> METRICS[Metrics Engine]
+
+    PROCESSING
+        --> PERFORMANCE[Performance Analysis]
+
+    PROCESSING
+        --> WARNINGS[Warning Engine]
+
+    PROCESSING
+        --> CHARTS[Chart Generation]
+
+    PROCESSING
+        --> MAP[Map Visualization]
+
+    METRICS --> UI[User Interface]
+    PERFORMANCE --> UI
+    WARNINGS --> UI
+    CHARTS --> UI
+    MAP --> UI
+```
+
+The architecture separates data ingestion, transformation, analysis, and visualization into independent modules, improving maintainability and enabling future expansion.
+
+### Data Flow
+
+```mermaid
+flowchart TD
+    CSV[Raw CSV Log]
+        --> VALIDATION[Schema Validation]
+
+    VALIDATION
+        --> NORMALIZATION[Data Normalization]
+
+    NORMALIZATION
+        --> DERIVED[Derived Metrics]
+
+    DERIVED
+        --> METRICS[Session Metrics]
+
+    DERIVED
+        --> PERFORMANCE[Performance Analysis]
+
+    DERIVED
+        --> MAP[GNSS Visualization]
+
+    DERIVED
+        --> CHARTS[Time-Series Visualization]
+
+    METRICS --> DASHBOARD[Dashboard]
+    PERFORMANCE --> DASHBOARD
+    MAP --> DASHBOARD
+    CHARTS --> DASHBOARD
+```
+
+Every analysis begins with schema validation and normalization, ensuring that all downstream calculations operate on a consistent and predictable dataset.
+
+This approach makes Trace Studio robust against malformed logs and simplifies future integration of additional telemetry sources.
+
+### Project Structure
+
+```text
+trace_studio/
+│
+├── app.py
+│
+├── config.py
+├── schema.py
+│
+├── importer.py
+├── processing.py
+├── metrics.py
+├── performance.py
+├── warnings.py
+│
+├── charts.py
+├── map_view.py
+├── cursor.py
+│
+├── ui.py
+├── theme.py
+│
+└── __init__.py
+```
+
+### Module Responsibilities
+
+| Module           | Responsibility                          |
+| ---------------- | --------------------------------------- |
+| `importer.py`    | CSV loading and validation              |
+| `processing.py`  | Data normalization and derived channels |
+| `metrics.py`     | Session statistics and summary metrics  |
+| `performance.py` | Performance-oriented analysis           |
+| `warnings.py`    | Automatic quality assessment            |
+| `charts.py`      | Time-series visualizations              |
+| `map_view.py`    | GNSS-based geographic visualization     |
+| `cursor.py`      | Shared temporal cursor management       |
+| `ui.py`          | User interface composition              |
+| `theme.py`       | Styling and presentation layer          |
 
 ---
 
@@ -81,244 +208,563 @@ Report di validazione JSON, metriche di sessione, warning tecnici e tipi di colo
 
 ---
 
-## Architettura del progetto
+---
 
-```
-trace_studio/
-│
-├── app.py                  # Entry point Streamlit, routing tab e orchestrazione
-│
-├── config.py               # Costanti globali (colori, conversioni, titoli)
-├── schema.py               # Definizione colonne attese, unità, descrizioni e validazione CSV
-│
-├── importer.py             # Caricamento, pulizia e validazione del file CSV
-├── processing.py           # Pipeline di normalizzazione e derivazione colonne
-├── metrics.py              # Calcolo metriche di sessione (durata, distanza, velocità, ecc.)
-├── performance.py          # Metriche prestazionali (tempi 0-100, friction circle, ecc.)
-├── warnings.py             # Warning tecnici automatici sulla qualità dei dati
-│
-├── charts.py               # Grafici Plotly (serie temporali sincronizzate)
-├── map_view.py             # Mappa Folium con percorso colorato e marker cursore
-├── cursor.py               # Gestione centralizzata del cursore temporale globale
-│
-├── ui.py                   # Tutti i componenti UI Streamlit (dashboard, tab, ecc.)
-├── theme.py                # CSS e styling dark/motorsport, brand sidebar
-│
-└── __init__.py
-```
+## Features
 
-Il flusso di dati è sempre unidirezionale:
+### Session Overview Dashboard
 
-```
-CSV  →  importer  →  processing  →  metrics / warnings / performance
-                                 →  charts / map_view / ui
-```
+Trace Studio automatically generates a high-level summary of each telemetry session, providing immediate visibility into the most relevant indicators.
+
+Available metrics include:
+
+* Session duration
+* Number of samples
+* Distance travelled
+* Maximum vehicle speed
+* Maximum engine RPM
+* Peak longitudinal acceleration
+* Peak lateral acceleration
+* Altitude statistics
+* Estimated gear usage
+
+The dashboard also includes a technical warning panel highlighting potential issues in the recorded telemetry.
 
 ---
 
-## Requisiti
+### Data Quality Assessment
 
-- **Python 3.11** o superiore
-- Connessione Internet attiva per il caricamento dei tile OpenStreetMap nella scheda Mappa
+Before analysis, Trace Studio evaluates the quality of the imported dataset and automatically reports anomalies.
 
-Dipendenze Python (gestite da `requirements.txt`):
+Examples include:
 
-| Pacchetto | Versione minima | Utilizzo |
-|---|---|---|
-| `streamlit` | 1.35 | Framework UI |
-| `pandas` | 2.2 | Manipolazione dati |
-| `numpy` | 1.26 | Calcoli numerici |
-| `plotly` | 5.22 | Grafici temporali interattivi |
-| `folium` | 0.16 | Mappa GNSS interattiva |
-| `streamlit-folium` | 0.20 | Integrazione Folium in Streamlit |
-| `branca` | 0.7 | Colormaps per la mappa |
+* Missing data.
+* Invalid timestamps.
+* GNSS coverage issues.
+* Synchronization degradation.
+* Sampling gaps.
+* Sensor availability problems.
+
+This allows users to assess the reliability of a session before drawing conclusions from the data.
 
 ---
 
-## Installazione
+### Synchronized Time-Series Analysis
 
-Le istruzioni seguenti si riferiscono a Windows (PowerShell). Su macOS/Linux il processo è analogo con `/` al posto di `\`.
+Telemetry channels can be visualized through synchronized interactive plots sharing a common time axis.
 
-**1. Clona il repository**
+Supported channels include:
 
-```powershell
-git clone https://github.com/mdmmt05/trace-studio.git
-cd trace-studio
+* Vehicle speed
+* Engine RPM
+* Throttle position
+* Longitudinal acceleration
+* Lateral acceleration
+* Roll
+* Pitch
+* Slope
+* Heading
+* Yaw rate
+* Jerk
+* Curvature
+* Estimated gear
+
+Features:
+
+* Shared zoom and pan.
+* Unified hover mode.
+* Multi-channel comparison.
+* Interactive time cursor.
+* Automatic synchronization across all visualizations.
+
+This makes it possible to correlate vehicle behaviour across multiple subsystems at a specific instant in time.
+
+---
+
+### Interactive GNSS Visualization
+
+Trace Studio provides an interactive geographic representation of the recorded route using OpenStreetMap.
+
+Capabilities include:
+
+* Raw GNSS route visualization.
+* Color-coded telemetry overlays.
+* Start and end markers.
+* Interactive route exploration.
+* Cursor synchronization with time-series charts.
+* Automatic downsampling for large datasets.
+
+Route segments can be coloured using:
+
+* Vehicle speed
+* RPM
+* Throttle position
+* Longitudinal acceleration
+* Lateral acceleration
+* Slope
+* Jerk
+* Curvature
+* Estimated gear
+
+This enables rapid spatial interpretation of vehicle behaviour.
+
+---
+
+### Performance Analysis
+
+Trace Studio includes dedicated tools for extracting performance-oriented metrics from recorded sessions.
+
+Current analyses include:
+
+#### Acceleration Metrics
+
+* 0–50 km/h
+* 0–100 km/h
+* 80–120 km/h
+
+The fastest valid event within the session is automatically identified.
+
+#### Braking Analysis
+
+* Maximum deceleration
+* Peak braking location
+* Vehicle speed at peak braking
+
+#### Lateral Dynamics
+
+* Peak lateral acceleration
+* Cornering load estimation
+
+#### Threshold Analysis
+
+Time spent above configurable thresholds for:
+
+* RPM
+* Throttle position
+* Lateral acceleration
+
+#### Friction Circle
+
+Interactive friction-circle visualization displaying:
+
+* Longitudinal acceleration
+* Lateral acceleration
+* Vehicle speed colouring
+* Reference circles
+
+This view provides an intuitive representation of combined vehicle loading.
+
+---
+
+### Derived Telemetry Channels
+
+Trace Studio enriches raw telemetry through a dedicated processing pipeline.
+
+Derived channels currently include:
+
+| Channel          | Description                        |
+| ---------------- | ---------------------------------- |
+| `time_s`         | Session-relative time              |
+| `speed_mps`      | Speed in SI units                  |
+| `distance_m`     | Canonical travelled distance       |
+| `distance_km`    | Travelled distance in kilometres   |
+| `sample_dt_s`    | Sampling interval                  |
+| `acc_lon_mps2`   | Longitudinal acceleration          |
+| `acc_lat_mps2`   | Lateral acceleration               |
+| `acc_lon_G_filt` | Filtered longitudinal acceleration |
+| `acc_lat_G_filt` | Filtered lateral acceleration      |
+| `jerk_lon_mps3`  | Longitudinal jerk                  |
+| `jerk_lat_mps3`  | Lateral jerk                       |
+| `curvature_1pm`  | Path curvature                     |
+| `curve_radius_m` | Estimated curve radius             |
+
+The goal is to transform raw sensor values into quantities that are easier to interpret and analyse.
+
+---
+
+### Data Exploration Tools
+
+Trace Studio includes several utilities for inspecting the dataset directly.
+
+Available tools:
+
+* Raw data preview.
+* Processed data preview.
+* Column catalogue.
+* Unit reference.
+* Type inspection.
+* Session diagnostics.
+
+These tools are particularly useful when developing new firmware features or validating telemetry pipelines.
+
+---
+
+### Debug & Validation
+
+A dedicated debug section exposes internal information generated during processing.
+
+Examples include:
+
+* Validation reports.
+* Session statistics.
+* Warning summaries.
+* Column types.
+* Processing diagnostics.
+
+This functionality is intended primarily for development, testing, and telemetry pipeline validation.
+
+---
+
+## Design Principles
+
+### Offline First
+
+All processing occurs locally on the user's machine.
+
+No cloud services or remote APIs are required.
+
+### Transparency
+
+Every transformation applied to telemetry data is explicit and reproducible.
+
+### Reproducibility
+
+The same input dataset always generates the same derived metrics and analyses.
+
+### Extensibility
+
+The architecture allows new channels, analyses, visualizations, and data sources to be integrated with minimal impact on existing modules.
+
+### Analysis-Oriented Design
+
+The platform prioritizes understanding and exploration of telemetry data rather than simple visualization.
+
+---
+
+## Requirements
+
+### Runtime Requirements
+
+* Python 3.11+
+* Modern web browser
+* Internet connection (required only for OpenStreetMap tile loading)
+
+---
+
+### Python Dependencies
+
+| Package            | Purpose                      |
+| ------------------ | ---------------------------- |
+| `streamlit`        | User interface framework     |
+| `pandas`           | Data manipulation            |
+| `numpy`            | Numerical computations       |
+| `plotly`           | Interactive visualizations   |
+| `folium`           | Geographic visualization     |
+| `streamlit-folium` | Streamlit/Folium integration |
+| `branca`           | Colormap generation          |
+
+All dependencies are listed in `requirements.txt`.
+
+---
+
+## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/mdmmt05/Trace-Studio.git
+cd Trace-Studio
 ```
 
-**2. Crea un ambiente virtuale**
+### Create Virtual Environment
 
-```powershell
+```bash
 python -m venv .venv
 ```
 
-**3. Attiva l'ambiente virtuale**
+### Activate Environment
+
+**Windows (PowerShell)**
 
 ```powershell
-# PowerShell
 .venv\Scripts\Activate.ps1
+```
 
-# Prompt dei comandi
+**Windows (Command Prompt)**
+
+```cmd
 .venv\Scripts\activate.bat
+```
 
-# macOS / Linux
+**Linux / macOS**
+
+```bash
 source .venv/bin/activate
 ```
 
-**4. Installa le dipendenze**
+### Install Dependencies
 
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-## Avvio
+## Launching Trace Studio
 
-```powershell
+Start the application with:
+
+```bash
 streamlit run app.py
 ```
 
-L'app si aprirà automaticamente nel browser all'indirizzo `http://localhost:8501`.
+Once launched, Streamlit will automatically open a browser window.
 
-Dalla **sidebar** carica un file CSV Trace, poi naviga tra le schede:
+By default the application is available at:
 
-| Scheda | Contenuto |
-|---|---|
-| **Dashboard** | Metriche chiave e warning tecnici |
-| **Grafici** | Serie temporali sincronizzate con cursore |
-| **Mappa** | Percorso GNSS raw con colore telemetrico |
-| **Performance** | Tempi di accelerazione, frenata, friction circle |
-| **Dati** | Anteprima del DataFrame normalizzato |
-| **Colonne** | Catalogo colonne con unità e tipo |
-| **Debug** | Report validazione, metriche raw, tipi colonne |
-
-### Shortcut da tastiera
-
-| Tasto | Azione |
-|---|---|
-| `Ctrl+R` | Ricarica app/browser |
-| Drag sui grafici | Zoom temporale |
-| Doppio click sui grafici | Reset zoom Plotly |
-| Click sulla mappa | Sposta cursore al punto GNSS più vicino |
-
----
-
-## Formato CSV atteso
-
-Il file CSV deve contenere esattamente le seguenti colonne (l'ordine non è rilevante; colonne aggiuntive vengono tollerate e conservate).
-
-| Colonna | Tipo | Descrizione |
-|---|---|---|
-| `timestamp_utc_str` | stringa | Etichetta UTC leggibile (non usata come asse temporale) |
-| `lat`, `lon` | float | Coordinate GNSS |
-| `alt_m` | float | Altitudine (m) |
-| `sat`, `hdop` | float | Qualità segnale GNSS |
-| `speed_obd_kmh` | float | Velocità OBD-II (km/h) |
-| `acc_lon_G`, `acc_lat_G` | float | Accelerazioni (G) |
-| `roll_deg`, `pitch_deg`, `slope_deg`, `slope_confidence` | float | Assetto veicolo |
-| `heading_deg`, `yawRate_dps`, `heading_confidence` | float | Direzione e imbardata |
-| `rpm`, `load_pct`, `throttle_pct` | float | Dati motore OBD-II |
-| `estimated_gear` | int | Marcia stimata |
-| `t_mono_us` | int | Timer monotono µs — **asse temporale principale** |
-| `utc_epoch_us` | int | Epoch UTC µs (riferimento) |
-| `utc_valid`, `sync_quality` | int | Validità e qualità sincronizzazione |
-| `imu_t_us`, `gnss_t_us`, `obd_speed_t_us` | int | Timestamp sorgenti dati |
-| `imu_age_ms`, `gnss_age_ms`, `obd_speed_age_ms` | int | Età dei dati al momento del log (ms) |
-
-> **Nota importante:** l'asse temporale primario è `t_mono_us`, non `timestamp_utc_str` né `utc_epoch_us`. La pipeline calcola `time_s` come secondi trascorsi dal primo campione valido.
-
-Un file CSV di esempio per test è disponibile in `trace_dummy_log.csv` (1.000 campioni a ~2 Hz, sessione simulata su circuito urbano).
-
----
-
-## Colonne derivate dalla pipeline
-
-`processing.normalize_trace_data()` aggiunge le seguenti colonne al DataFrame originale senza modificare le colonne raw.
-
-| Colonna derivata | Unità | Descrizione |
-|---|---|---|
-| `time_s` | s | Secondi trascorsi da inizio sessione |
-| `sample_dt_s` | s | Intervallo tra campioni consecutivi |
-| `speed_mps` | m/s | Velocità convertita da `speed_obd_kmh` |
-| `acc_lon_mps2`, `acc_lat_mps2` | m/s² | Accelerazioni convertite da G |
-| `distance_from_speed_m` | m | Distanza cumulativa da integrazione rettangolare OBD |
-| `gnss_step_distance_m` | m | Distanza haversine passo-passo GNSS |
-| `distance_from_gnss_m` | m | Distanza cumulativa GNSS |
-| `distance_m` | m | Distanza canonica (GNSS se plausibile, altrimenti OBD) |
-| `distance_km` | km | `distance_m` in chilometri |
-| `acc_lon_G_filt`, `acc_lat_G_filt` | G | Accelerazioni filtrate (mediana mobile, finestra 5) |
-| `acc_lon_mps2_filt`, `acc_lat_mps2_filt` | m/s² | Accelerazioni filtrate in unità SI |
-| `jerk_lon_mps3`, `jerk_lat_mps3` | m/s³ | Jerk longitudinale e laterale da acc filtrata |
-| `curvature_1pm` | 1/m | Curvatura da yaw rate (fallback: derivata heading) |
-| `abs_curvature_1pm` | 1/m | Curvatura assoluta |
-| `curve_radius_m` | m | Raggio di curvatura (NaN oltre 10 km) |
-| `valid_position` | bool | Vero se lat/lon sono finiti e non entrambi zero |
-| `valid_time` | bool | Vero se `t_mono_us` e `time_s` sono finiti |
-
----
-
-## Eseguire i test
-
-```powershell
-python -m pytest tests/ -v
+```text
+http://localhost:8501
 ```
 
 ---
 
-## Limitazioni note
+## Workflow
 
-- **Nessun map-matching**: il percorso segue le coordinate GNSS raw e può apparire staccato dalla carreggiata reale.
-- **Distanza da velocità**: usa integrazione rettangolare semplice (sovrastima in frenata, sottostima in accelerazione).
-- **Distanza da GNSS**: formula haversine senza correzione per l'altitudine.
-- **Curvatura**: approssimata da yaw rate o derivata dell'heading; non è validata contro la geometria stradale reale.
-- **Tempi di accelerazione 0-x**: rilevati solo se la sessione contiene il transiente da fermo (velocità ≤ 3 km/h). Sessioni che iniziano già in moto non producono un valore.
-- **Mappa**: richiede connessione Internet per caricare i tile OpenStreetMap.
-- **Sessione singola**: non è ancora possibile confrontare due o più sessioni sullo stesso grafico.
-- **Nessun salvataggio persistente**: nessun database, nessun export Parquet o PDF.
+The recommended workflow is:
+
+```text
+Vehicle
+    ↓
+Trace
+    ↓
+CSV Log
+    ↓
+Trace Studio
+    ↓
+Validation
+    ↓
+Processing
+    ↓
+Analysis
+    ↓
+Visualization
+```
+
+A typical analysis session consists of:
+
+1. Importing a CSV log generated by Trace.
+2. Validating the telemetry structure.
+3. Generating derived metrics.
+4. Exploring charts and maps.
+5. Reviewing performance indicators.
+6. Investigating anomalies or interesting events.
+
+---
+
+## Expected CSV Format
+
+Trace Studio is designed to work with logs generated by Trace.
+
+The minimum supported schema includes:
+
+| Category        | Examples                             |
+| --------------- | ------------------------------------ |
+| GNSS            | Latitude, longitude, altitude, HDOP  |
+| IMU             | Accelerations, roll, pitch, slope    |
+| OBD2            | RPM, speed, throttle, engine load    |
+| Synchronization | Monotonic timestamps, UTC timestamps |
+| Quality Metrics | Sensor age, sync quality             |
+
+Additional columns are preserved whenever possible.
+
+The processing pipeline validates incoming data before analysis begins.
+
+---
+
+## Processing Pipeline
+
+The telemetry processing pipeline performs several transformations before analysis:
+
+### Validation
+
+* Schema validation.
+* Missing-column detection.
+* Type verification.
+
+### Normalization
+
+* Unit conversions.
+* Timestamp normalization.
+* Distance estimation.
+
+### Enrichment
+
+Generation of derived telemetry channels such as:
+
+* Distance travelled.
+* Filtered acceleration.
+* Jerk.
+* Curvature.
+* Curve radius.
+
+### Analysis
+
+Computation of:
+
+* Session metrics.
+* Performance indicators.
+* Data quality indicators.
+
+### Visualization
+
+Generation of:
+
+* Dashboards.
+* Time-series charts.
+* Interactive maps.
+* Friction-circle plots.
+
+---
+
+## Testing
+
+Run the automated test suite with:
+
+```bash
+python -m pytest tests/ -v
+```
+
+The tests primarily focus on:
+
+* CSV validation.
+* Data normalization.
+* Metric generation.
+* Processing pipeline correctness.
+
+---
+
+## Known Limitations
+
+Current limitations include:
+
+### Mapping
+
+* No map matching.
+* Raw GNSS coordinates only.
+* Dependence on OpenStreetMap tile availability.
+
+### Distance Estimation
+
+* OBD-based distance uses numerical integration.
+* GNSS-based distance uses a Haversine approximation.
+
+### Session Management
+
+* Single-session analysis only.
+* No persistent session database.
+
+### Reporting
+
+* No PDF export.
+* No automated report generation.
+
+These limitations are actively considered for future development.
 
 ---
 
 ## Roadmap
 
-Le fasi già implementate sono contrassegnate con ✅.
+### Completed
 
-| Fase | Descrizione | Stato |
-|---|---|---|
-| 1–2 | Caricamento CSV, validazione schema, normalizzazione, metriche base | ✅ |
-| 3 | Dashboard di sintesi con warning tecnici | ✅ |
-| 4 | Grafici temporali sincronizzati con cursore | ✅ |
-| 5 | Mappa GNSS raw con percorso colorato | ✅ |
-| 6 | Cursor centralizzato e sincronizzazione grafici/mappa | ✅ |
-| 7 | Canali derivati (jerk, curvatura, raggio, acc filtrate) | ✅ |
-| 8 | Catalogo colonne e scheda Debug | ✅ |
-| 9 | Analisi performance (tempi, friction circle, soglie) | ✅ |
-| 10 | Confronto multi-sessione | ⬜ |
-| 11 | Export report PDF / Parquet | ⬜ |
-| 12 | Map-matching (OSRM / Valhalla) | ⬜ |
-| 13 | Database locale sessioni | ⬜ |
-| 14 | Annotazioni manuali su grafici e mappa | ⬜ |
+* CSV validation
+* Data normalization
+* Interactive dashboard
+* Synchronized charts
+* Interactive GNSS map
+* Shared time cursor
+* Derived telemetry channels
+* Session diagnostics
+* Performance analysis
+* Friction circle visualization
 
 ---
 
-## Contribuire
+### Planned
 
-Pull request e segnalazioni di bug sono benvenuti. Prima di aprire una PR:
+#### Analysis
 
-1. Crea un branch a partire da `main`: `git checkout -b feature/nome-feature`.
-2. Segui le convenzioni di codice esistenti (type hints, docstring, gestione difensiva dei NaN).
-3. Aggiungi o aggiorna i test in `tests/` se la modifica riguarda la pipeline dati.
-4. Verifica che `pytest tests/ -v` passi senza errori.
-5. Apri la PR descrivendo cosa cambia e perché.
+* Multi-session comparison
+* Session-to-session overlays
+* Lap segmentation
+* Advanced statistical summaries
+
+#### Mapping
+
+* Map matching
+* Route reconstruction
+* Segment classification
+
+#### Reporting
+
+* PDF report generation
+* Exportable analysis summaries
+* Snapshot generation
+
+#### Data Management
+
+* Local session database
+* Session tagging
+* Session search and filtering
+
+#### Ecosystem Integration
+
+* Direct Trace log import
+* Shared configuration profiles
+* Metadata synchronization with Trace
 
 ---
 
-## Licenza
+## Contributing
 
-Distribuito sotto licenza **MIT**. Vedi [`LICENSE`](LICENSE) per i dettagli.
+Contributions are welcome.
+
+When contributing:
+
+1. Create a dedicated feature branch.
+2. Follow existing code conventions.
+3. Add tests when modifying processing logic.
+4. Ensure all tests pass before submitting a pull request.
+
+Bug reports, feature requests, and discussions are encouraged through GitHub Issues.
+
+---
+
+## License
+
+This project is distributed under the MIT License.
+
+See the `LICENSE` file for details.
+
+---
+
+## Acknowledgements
+
+Trace Studio was developed as part of the Trace Ecosystem with the goal of providing a transparent, extensible, and fully local telemetry analysis workflow.
+
+The project builds upon the excellent work of the open-source communities behind:
+
+* Streamlit
+* Plotly
+* Pandas
+* NumPy
+* Folium
+
+whose tools make rapid telemetry exploration possible.
 
 ---
 
 <div align="center">
-  Fatto con ❤️ per l'analisi telemetrica su pista e strada.
+
+Built for people who prefer understanding data over merely collecting it.
+
 </div>
