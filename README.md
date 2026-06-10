@@ -117,7 +117,7 @@ Le istruzioni seguenti si riferiscono a Windows (PowerShell). Su macOS/Linux il 
 **1. Clona il repository**
 
 ```powershell
-git clone https://github.com/<your-username>/trace-studio.git
+git clone https://github.com/mdmmt05/trace-studio.git
 cd trace-studio
 ```
 
