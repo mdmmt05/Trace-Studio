@@ -182,34 +182,6 @@ trace_studio/
 
 ---
 
-## Funzionalità
-
-### Dashboard di sintesi
-Metriche chiave a colpo d'occhio: durata sessione, numero campioni, distanza (OBD e GNSS), velocità massima, RPM massimo, accelerazioni di picco, altitudine, marcia stimata. Un pannello warning tecnici segnala automaticamente dati mancanti, gap di campionamento, bassa copertura GNSS e qualità di sincronizzazione.
-
-### Grafici temporali sincronizzati
-Selezione multipla dei canali telemetrici (velocità, RPM, throttle, accelerazioni, rollio, beccheggio, pendenza, heading, yaw rate, jerk, curvatura, marcia). Tutti i sottografici condividono l'asse X (`time_s`), con zoom e pan sincronizzati e hover unificato (`x unified`). Un cursore temporale tramite slider mostra una linea verticale sull'istante selezionato e i valori del campione più vicino nel pannello laterale.
-
-### Mappa GNSS raw con percorso colorato
-Il tracciato GPS viene visualizzato su OpenStreetMap senza map-matching. Il colore di ogni segmento riflette il valore di un canale telemetrico scelto dall'utente (velocità, RPM, throttle, accelerazioni, pendenza, jerk, curvatura, marcia). Marker inizio/fine con popup, marker cursore sincronizzato con lo slider dei grafici e click sulla mappa per spostare il cursore al punto GNSS più vicino. Downsampling automatico per sessioni con più di 5.000 segmenti.
-
-### Analisi di performance
-- **Tempi di accelerazione**: 0–50 km/h, 0–100 km/h, 80–120 km/h (misurazione del passaggio più veloce nell'intera sessione).
-- **Frenata**: decelerazione massima istantanea in G, istante e velocità al momento del picco.
-- **Accelerazione laterale**: picco assoluto in G.
-- **Durate soglia**: tempo trascorso oltre una soglia di RPM, throttle e accelerazione laterale configurabili.
-- **Friction circle**: scatter plot accelerazione longitudinale vs laterale, colorato per velocità, con cerchi di riferimento a 0.3 g, 0.6 g e 1.0 g.
-
-### Preview dati e catalogo colonne
-Anteprima del DataFrame grezzo e derivato con tipi, unità e descrizioni di ogni colonna.
-
-### Debug sessione
-Report di validazione JSON, metriche di sessione, warning tecnici e tipi di colonna.
-
----
-
----
-
 ## Features
 
 ### Session Overview Dashboard
